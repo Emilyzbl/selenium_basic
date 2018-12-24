@@ -16,7 +16,7 @@ driver = webdriver.Chrome()
 def getFirst(url,selector,keyword,imgname):
     driver.get(url)
     if selector == 'kw':
-        driver.find_element_by_id('kw').send_keys(keyword)
+        driver.find_element_by_id(selector).send_keys(keyword)
     elif selector == 'q':
         driver.find_element_by_name(selector).send_keys(keyword)
     driver.save_screenshot('./'+imgname)
