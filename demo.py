@@ -29,7 +29,7 @@ getFirst(url,'kw',key,imgname)
 
 url1 = 'https://cn.bing.com'
 date1 = datetime.datetime.now()
-imgname1 = date1.strftime('%Y%m%d%H%M%S') + '.jpg'
+imgname1 = date1.strftime('%Y%m%d%H%M%S') + '.png'
 getFirst(url1,'q',key,imgname1)
 
 time.sleep(3)
