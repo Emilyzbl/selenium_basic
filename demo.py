@@ -22,7 +22,7 @@ def getFirst(url,selector,keyword,imgname):
     driver.save_screenshot('./'+imgname)
 
 url = 'http://www.baidu.com'
-key = 'Hello Word'
+key = 'Hello World'
 date = datetime.datetime.now()
 imgname = date.strftime('%Y%m%d%H%M%S') + '.png'
 getFirst(url,'kw',key,imgname)
