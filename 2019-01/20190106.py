@@ -95,7 +95,7 @@ for i in range(cnt) :
 
 
 '''
-
+使用action进行发帖操作
 '''
 
 from selenium import webdriver 
