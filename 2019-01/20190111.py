@@ -12,14 +12,11 @@ driver.find_element_by_link_text('高级搜索').click()
 driver.find_element_by_xpath('//*[@for="radio03"]').click()
 driver.find_element_by_link_text('搜索微博').click()
 
-ul = driver.find_element_by_xpath('//*[@class="s-scroll"]/ul')
-# lis = ul.find_elements_by_xpath('li')
-# ul = driver.find_element_by_css_selector('ul[class="s-scroll"]')
-liNum = ul.find_elements_by_xpath('li')
-print('li个数：'+liNum)
-
-eles = driver.find_elements_by_css_selector('div[action-type="feed_list_item"]')
-# print(len(eles))
+# 获取 第*页 元素，看有多少页数
+ul = driver.find_element_by_xpath('//*[@class="s-scroll"]')
+lis = ul.find_elements_by_xpath('li')
+liNum = len(lis)    # 有多少个li
+# print(len(lis))    
 
 # 新建一个Excel
 excel = xlwt.Workbook()
@@ -33,44 +30,63 @@ sheet.write(0,5,'转发数')
 sheet.write(0,6,'评论数')
 sheet.write(0,7,'点赞数')
 
-i = 0
-# todo 找到每个微博中的 标题，发送人，发布时间，来源，收藏数，转发数，评论数，点赞数
-for aa in eles :
-    # 标题
-    a1 = aa.find_element_by_xpath('.//*[@node-type="feed_list_content"]').text
-    # 发送人
-    a2 = aa.find_element_by_xpath('.//*[@class="name"]').text
-    # 发布时间
-    a3 = aa.find_element_by_css_selector('p[class="from"] > a:nth-child(1)').text
-    # 来源
-    a4 = aa.find_element_by_xpath('.//*[@rel="nofollow"]').text
-    # 收藏数
-    a5 = aa.find_element_by_css_selector('div[class="card-act"] > ul > li:nth-child(1)').text
-    a51 = a5.split('收藏')[1]
-    # 转发数
-    a6 = aa.find_element_by_css_selector('div[class="card-act"] > ul > li:nth-child(2)').text
-    a61 = a6.split('转发')[1]
-    # 评论数
-    a7 = aa.find_element_by_css_selector('div[class="card-act"] > ul > li:nth-child(3)').text
-    a71 = a7.split('评论')[1]
-    # 点赞数
-    a8 = aa.find_element_by_xpath('.//*[@title="赞"]').text
+rr = 0
+# 循环页数
+for num in range(liNum):
+    # num 从0开始，获取下一页元素，并点击
+    if num == 1:
+        driver.find_element_by_css_selector('div[class="m-page"] > div > a:nth-child(2)').click()  
+    # 获取下一页元素，并点击
+    elif num > 1:
+        driver.find_element_by_css_selector('div[class="m-page"] > div > a:nth-child(3)').click() 
 
-    i += 1
-    sheet.write(i,0,a1)
-    sheet.write(i,1,a2)
-    sheet.write(i,2,a3)
-    sheet.write(i,3,a4)
-    sheet.write(i,4,a51)
-    sheet.write(i,5,a61)
-    sheet.write(i,6,a71)
-    sheet.write(i,7,a8)
+    # 每页信息的元素
+    eles = driver.find_elements_by_css_selector('div[action-type="feed_list_item"]')
+    # 每页元素个数
+    pageNum = len(eles)
+    # 
+    i = 0
+    # todo 找到每个微博中的 标题，发送人，发布时间，来源，收藏数，转发数，评论数，点赞数
+    for aa in eles :
+        # 标题
+        a1 = aa.find_element_by_css_selector('p[class="txt"]').text
+        # 发送人
+        a2 = aa.find_element_by_css_selector('a[class="name"]').text
+        # 发布时间
+        a3 = aa.find_element_by_css_selector('p[class="from"] > a:nth-child(1)').text
+        # 来源
+        a4 = aa.find_element_by_css_selector('a[rel="nofollow"]').text
+        # 收藏数
+        a5 = aa.find_element_by_css_selector('div[class="card-act"] > ul > li:nth-child(1)').text
+        a51 = a5.split('收藏')[1]
+        # 转发数
+        a6 = aa.find_element_by_css_selector('div[class="card-act"] > ul > li:nth-child(2)').text
+        a61 = a6.split('转发')[1]
+        # 评论数
+        a7 = aa.find_element_by_css_selector('div[class="card-act"] > ul > li:nth-child(3)').text
+        a71 = a7.split('评论')[1]
+        # 点赞数
+        a8 = aa.find_element_by_css_selector('a[title="赞"]').text
 
-    # # print(type(i+1),'999',len(eles))
-    # if (i+1) == len(eles):
-    #     # 点击 下一页
-    #     driver.find_element_by_css_selector('div[class="m-page"] > div > a:nth-child(2)').click()   
+        i += 1
+        # 每页每个元素所在的行
+        rows = rr + i
+        # print(i,num,rr,rows)
 
+        sheet.write(rows,0,a1)
+        sheet.write(rows,1,a2)
+        sheet.write(rows,2,a3)
+        sheet.write(rows,3,a4)
+        sheet.write(rows,4,a51)
+        sheet.write(rows,5,a61)
+        sheet.write(rows,6,a71)
+        sheet.write(rows,7,a8) 
+        
+        # 每页最后一条数据
+        if i == pageNum :
+            rr += pageNum
+        
+        
 # 将数据保存到 Excel 中
 excel.save('20190111测试.xls')
 
